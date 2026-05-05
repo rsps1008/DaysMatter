@@ -1,0 +1,10 @@
+<resources>
+    <color name="daymatter_bg">#0F172A</color>
+    <color name="daymatter_card">#162033</color>
+    <color name="daymatter_card_alt">#1F2A44</color>
+    <color name="daymatter_primary">#4EA1FF</color>
+    <color name="daymatter_primary_dark">#1D4ED8</color>
+    <color name="daymatter_accent">#F7B32B</color>
+    <color name="daymatter_text">#F8FAFC</color>
+    <color name="daymatter_text_muted">#94A3B8</color>
+</resources>
