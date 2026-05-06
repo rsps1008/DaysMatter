@@ -172,6 +172,7 @@ class DayMatterWidgetProvider : AppWidgetProvider() {
     private fun widgetEvents(): List<EventItem> {
         return DayMatterRepository.currentEvents()
             .filter { it.showInWidget }
+            .filter { CountdownLogic.resolveCountdown(it).days >= 0L }
             .sortedWith(compareBy<EventItem> { CountdownLogic.resolveCountdown(it).days }.thenBy { it.title })
     }
 

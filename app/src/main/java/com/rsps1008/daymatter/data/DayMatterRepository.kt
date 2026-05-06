@@ -15,6 +15,7 @@ import java.io.File
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.concurrent.atomic.AtomicBoolean
+import kotlin.math.abs
 
 object DayMatterRepository {
     private const val TAG = "DayMatterRepository"
@@ -209,7 +210,11 @@ object DayMatterRepository {
     }
 
     private fun eventComparator(): Comparator<EventItem> {
-        return compareBy<EventItem> { CountdownLogic.resolveCountdown(it).days }
+        return compareBy<EventItem> { CountdownLogic.resolveCountdown(it).days < 0 }
+            .thenBy { event ->
+                val days = CountdownLogic.resolveCountdown(event).days
+                if (days < 0) abs(days) else days
+            }
             .thenBy { it.title }
             .thenByDescending { it.createTime }
     }
