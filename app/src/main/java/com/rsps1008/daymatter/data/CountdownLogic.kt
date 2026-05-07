@@ -8,6 +8,7 @@ import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import java.time.temporal.TemporalAdjusters
 import java.time.format.DateTimeFormatter
+import java.time.DayOfWeek
 
 data class CountdownInfo(
     val targetDate: LocalDate,
@@ -42,7 +43,7 @@ object CountdownLogic {
             RepeatType.NONE -> target.toString()
             RepeatType.YEARLY -> "每年 ${event.date.format(yearlyFormatter)}"
             RepeatType.MONTHLY -> "每月 ${event.date.format(monthlyFormatter)}"
-            RepeatType.WEEKLY -> "每週 ${target.dayOfWeek}"
+            RepeatType.WEEKLY -> "每週 ${target.dayOfWeek.toChineseShort()}"
             RepeatType.CUSTOM -> "每 ${event.repeatInterval} 天"
         }
         return CountdownInfo(target, days, displayText, subtitle)
@@ -83,6 +84,18 @@ object CountdownLogic {
     private fun safeDate(year: Int, month: Int, day: Int): LocalDate {
         val maxDay = YearMonth.of(year, month).lengthOfMonth()
         return LocalDate.of(year, month, minOf(day, maxDay))
+    }
+}
+
+private fun DayOfWeek.toChineseShort(): String {
+    return when (this) {
+        DayOfWeek.MONDAY -> "一"
+        DayOfWeek.TUESDAY -> "二"
+        DayOfWeek.WEDNESDAY -> "三"
+        DayOfWeek.THURSDAY -> "四"
+        DayOfWeek.FRIDAY -> "五"
+        DayOfWeek.SATURDAY -> "六"
+        DayOfWeek.SUNDAY -> "日"
     }
 }
 
