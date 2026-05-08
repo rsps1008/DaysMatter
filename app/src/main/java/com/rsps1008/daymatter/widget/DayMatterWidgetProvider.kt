@@ -13,12 +13,11 @@ import com.rsps1008.daymatter.R
 import com.rsps1008.daymatter.data.CountdownLogic
 import com.rsps1008.daymatter.data.DayMatterRepository
 import com.rsps1008.daymatter.data.EventItem
+import com.rsps1008.daymatter.ui.UiText
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 class DayMatterWidgetProvider : AppWidgetProvider() {
-    private val widgetDateFormatter = DateTimeFormatter.ofPattern("yyyy年M月d日 EEEE", Locale.TAIWAN)
-
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         appWidgetIds.forEach { updateWidget(context, appWidgetManager, it) }
     }
@@ -54,12 +53,12 @@ class DayMatterWidgetProvider : AppWidgetProvider() {
         val remoteViews = RemoteViews(context.packageName, R.layout.widget_daymatter)
         val event = resolveCurrentEvent(context, widgetId)
         if (event == null) {
-            remoteViews.setTextViewText(R.id.widgetTitle, "尚未設定 Widget 事件")
-            remoteViews.setTextViewText(R.id.widgetCategory, "請設定")
-            remoteViews.setTextViewText(R.id.widgetSubtitle, "請在事件中勾選「顯示於桌面」")
+            remoteViews.setTextViewText(R.id.widgetTitle, UiText.widgetEmptyTitle())
+            remoteViews.setTextViewText(R.id.widgetCategory, UiText.widgetEmptyCategory())
+            remoteViews.setTextViewText(R.id.widgetSubtitle, UiText.widgetEmptySubtitle())
             remoteViews.setTextViewText(R.id.widgetIconDay, "")
             remoteViews.setTextViewText(R.id.widgetCountdownNumber, "0")
-            remoteViews.setTextViewText(R.id.widgetCountdownUnit, "天")
+            remoteViews.setTextViewText(R.id.widgetCountdownUnit, UiText.widgetUnit(0))
         } else {
             val countdown = CountdownLogic.resolveCountdown(event)
             val countNumber = when {
@@ -68,10 +67,10 @@ class DayMatterWidgetProvider : AppWidgetProvider() {
             }
             remoteViews.setTextViewText(R.id.widgetTitle, event.title)
             remoteViews.setTextViewText(R.id.widgetCategory, event.category.label)
-            remoteViews.setTextViewText(R.id.widgetSubtitle, countdown.targetDate.format(widgetDateFormatter))
+            remoteViews.setTextViewText(R.id.widgetSubtitle, countdown.targetDate.format(widgetDateFormatter()))
             remoteViews.setTextViewText(R.id.widgetIconDay, event.date.dayOfMonth.toString())
             remoteViews.setTextViewText(R.id.widgetCountdownNumber, countNumber)
-            remoteViews.setTextViewText(R.id.widgetCountdownUnit, "天")
+            remoteViews.setTextViewText(R.id.widgetCountdownUnit, UiText.widgetUnit(countdown.days))
         }
         val launchIntent = PendingIntent.getActivity(
             context,
@@ -217,6 +216,14 @@ class DayMatterWidgetProvider : AppWidgetProvider() {
 
     private fun widgetRequestCode(widgetId: Int, action: String): Int {
         return 31 * widgetId + action.hashCode()
+    }
+
+    private fun widgetDateFormatter(): DateTimeFormatter {
+        return if (Locale.getDefault().language.startsWith("en")) {
+            DateTimeFormatter.ofPattern("yyyy/M/d EEE", Locale.ENGLISH)
+        } else {
+            DateTimeFormatter.ofPattern("yyyy年M月d日 EEEE", Locale.TAIWAN)
+        }
     }
 
     companion object {

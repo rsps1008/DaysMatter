@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.LocalLifecycleOwner
+import com.rsps1008.daymatter.ui.UiText
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -114,11 +115,11 @@ class MainActivity : ComponentActivity() {
         if (showSettingsDialog) {
             AlertDialog(
                 onDismissRequest = { showSettingsDialog = false },
-                title = { Text("通知權限") },
+                title = { Text(UiText.notificationPermission()) },
                 text = {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text("通知權限已關閉，系統可能不再跳出授權視窗。")
-                        Text("請到通知設定頁手動開啟，才能收到提醒。")
+                        Text(UiText.notificationPermissionLine1())
+                        Text(UiText.notificationPermissionLine2())
                     }
                 },
                 confirmButton = {
@@ -138,12 +139,12 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                     }) {
-                        Text("開啟設定")
+                        Text(UiText.openSettings())
                     }
                 },
                 dismissButton = {
                     TextButton(onClick = { showSettingsDialog = false }) {
-                        Text("取消")
+                        Text(UiText.cancel())
                     }
                 }
             )

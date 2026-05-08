@@ -14,6 +14,7 @@ import com.rsps1008.daymatter.data.CountdownLogic
 import com.rsps1008.daymatter.data.DayMatterRepository
 import com.rsps1008.daymatter.data.EventItem
 import com.rsps1008.daymatter.data.RepeatType
+import com.rsps1008.daymatter.ui.UiText
 import java.time.LocalDate
 import java.time.ZoneId
 
@@ -25,10 +26,10 @@ object NotificationScheduler {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         val channel = NotificationChannel(
             CHANNEL_ID,
-            "倒數日提醒",
+            UiText.reminderChannelName(),
             NotificationManager.IMPORTANCE_DEFAULT,
         ).apply {
-            description = "事件提醒通知"
+            description = UiText.reminderChannelDescription()
         }
         val manager = context.getSystemService(NotificationManager::class.java)
         manager.createNotificationChannel(channel)
@@ -71,7 +72,7 @@ object NotificationScheduler {
     fun postReminder(context: Context, event: EventItem) {
         createChannel(context)
         val countdown = CountdownLogic.resolveCountdown(event)
-        val text = if (countdown.days <= 0) "今天到了" else "還有 ${countdown.days} 天"
+        val text = UiText.countdownNotification(countdown.days)
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
             .setSmallIcon(R.mipmap.ic_launcher)

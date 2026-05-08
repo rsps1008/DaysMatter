@@ -150,7 +150,7 @@ fun DayMatterApp(
                 context.contentResolver.openOutputStream(uri)?.use { output ->
                     output.write(csv.toByteArray(Charsets.UTF_8))
                 }
-                snackbarHostState.showSnackbar("已完成匯出")
+                snackbarHostState.showSnackbar(UiText.exportDone())
             }
         }
     }
@@ -161,7 +161,7 @@ fun DayMatterApp(
             pendingDriveAction = null
             pendingDriveBackupCsv = null
             scope.launch {
-                snackbarHostState.showSnackbar("Google Drive 已取消")
+                snackbarHostState.showSnackbar(UiText.googleDriveCancelled())
             }
             return@rememberLauncherForActivityResult
         }
@@ -170,21 +170,21 @@ fun DayMatterApp(
             runCatching {
                 val authResult = GoogleDriveBackupService.resolveAuthorization(activity, result.data!!)
                 val accessToken = authResult.accessToken
-                    ?: throw IllegalStateException("Google Drive 授權失敗")
+                    ?: throw IllegalStateException(UiText.googleDriveAuthFailed())
                 when (action) {
                     DriveAction.BACKUP -> {
                         val csv = pendingDriveBackupCsv ?: viewModel.exportCsv()
                         GoogleDriveBackupService.backupCsv(accessToken, csv)
-                        snackbarHostState.showSnackbar("已備份到 Google Drive")
+                        snackbarHostState.showSnackbar(UiText.googleDriveBackupDone())
                     }
                     DriveAction.RESTORE -> {
                         val csv = GoogleDriveBackupService.restoreCsv(accessToken)
                         viewModel.importCsv(csv, replaceExisting = pendingDriveRestoreReplaceExisting)
-                        snackbarHostState.showSnackbar("已從 Google Drive 還原")
+                        snackbarHostState.showSnackbar(UiText.googleDriveRestoreDone())
                     }
                 }
             }.onFailure { error ->
-                snackbarHostState.showSnackbar("Google Drive 操作失敗：${error.message ?: "未知錯誤"}")
+                snackbarHostState.showSnackbar(UiText.googleDriveOperationFailed(error.message ?: "Unknown error"))
             }
             pendingDriveAction = null
             pendingDriveBackupCsv = null
@@ -202,12 +202,12 @@ fun DayMatterApp(
                 title = {
                     Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
                         Text(
-                            "倒數日",
+                            UiText.appTitle(),
                             fontWeight = FontWeight.Bold,
                             style = MaterialTheme.typography.titleLarge,
                         )
                         Text(
-                            "${events.size} 個事件",
+                            UiText.eventsCount(events.size),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
@@ -215,14 +215,14 @@ fun DayMatterApp(
                 },
                 actions = {
                     IconButton(onClick = { showSettings = true }) {
-                        Icon(Icons.Default.Settings, contentDescription = "設定")
+                        Icon(Icons.Default.Settings, contentDescription = UiText.settings())
                     }
                 }
             )
         },
         floatingActionButton = {
             FloatingActionButton(onClick = { editorTarget = EventItem(title = "", category = EventCategory.OTHER, date = LocalDate.now()) }) {
-                Icon(Icons.Default.Add, contentDescription = "新增事件")
+                Icon(Icons.Default.Add, contentDescription = UiText.addEvent())
             }
         },
         snackbarHost = { SnackbarHost(snackbarHostState) },
@@ -233,9 +233,9 @@ fun DayMatterApp(
                 .padding(padding)
                 .background(
                     Brush.verticalGradient(
-                        listOf(
-                            MaterialTheme.colorScheme.background,
-                            Color(0xFF12203A),
+                    listOf(
+                        MaterialTheme.colorScheme.background,
+                        Color(0xFF12203A),
                         )
                     )
                 )
@@ -262,16 +262,17 @@ fun DayMatterApp(
                             key = { it.id },
                         ) { event ->
                             val countdown = CountdownLogic.resolveCountdown(event)
-                            EventListItem(
-                                event = event,
-                                countdownText = countdown.displayText,
-                                detailText = buildString {
-                                    append(event.category.label)
-                                    append(" · ")
-                                    append(countdown.subtitle)
-                                },
-                                onClick = { editorTarget = event },
-                            )
+    EventListItem(
+        event = event,
+        countdownText = countdown.displayText,
+        countdownDays = countdown.days,
+        detailText = buildString {
+                                append(event.category.label)
+                                append(" · ")
+                                append(countdown.subtitle)
+                            },
+                            onClick = { editorTarget = event },
+                        )
                         }
                     }
                 }
@@ -310,7 +311,7 @@ fun DayMatterApp(
                 scope.launch {
                     val activity = context.findActivity()
                     if (activity == null) {
-                        snackbarHostState.showSnackbar("目前無法使用 Google Drive")
+                        snackbarHostState.showSnackbar(UiText.googleDriveUnavailable())
                         return@launch
                     }
                     val csv = viewModel.exportCsv()
@@ -326,21 +327,21 @@ fun DayMatterApp(
                                     IntentSenderRequest.Builder(pendingIntent.intentSender).build()
                                 )
                             } else {
-                                snackbarHostState.showSnackbar("Google Drive 授權失敗")
+                                snackbarHostState.showSnackbar(UiText.googleDriveAuthFailed())
                                 pendingDriveAction = null
                                 pendingDriveBackupCsv = null
                             }
                         } else {
                             val accessToken = authResult.accessToken
                             if (accessToken == null) {
-                                snackbarHostState.showSnackbar("Google Drive 授權失敗")
+                                snackbarHostState.showSnackbar(UiText.googleDriveAuthFailed())
                             } else {
                                 GoogleDriveBackupService.backupCsv(accessToken, csv)
-                                snackbarHostState.showSnackbar("已備份到 Google Drive")
+                                snackbarHostState.showSnackbar(UiText.googleDriveBackupDone())
                             }
                         }
                     }.onFailure { error ->
-                        snackbarHostState.showSnackbar("Google Drive 備份失敗：${error.message ?: "未知錯誤"}")
+                        snackbarHostState.showSnackbar(UiText.googleDriveBackupFailed(error.message ?: "Unknown error"))
                     }
                 }
             },
@@ -362,10 +363,10 @@ fun DayMatterApp(
                 pendingImportCsv = null
                 showImportModeDialog = false
             },
-            title = { Text("匯入 CSV") },
+            title = { Text(UiText.importCsvTitle()) },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                    Text("要怎麼處理目前已有的資料？", style = MaterialTheme.typography.bodyLarge)
+                    Text(UiText.importCsvQuestion(), style = MaterialTheme.typography.bodyLarge)
                     FilledTonalButton(
                         onClick = {
                             val input = csv ?: return@FilledTonalButton
@@ -374,13 +375,13 @@ fun DayMatterApp(
                                 pendingImportCsv = null
                                 showImportModeDialog = false
                                 snackbarHostState.showSnackbar(
-                                    "匯入 ${result.imported.size} 筆，略過 ${result.skippedLines.size} 筆"
+                                    UiText.importResult(result.imported.size, result.skippedLines.size, replacedExisting = false)
                                 )
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text("保留現有資料匯入")
+                        Text(UiText.importKeepExisting())
                     }
                     Button(
                         onClick = {
@@ -390,13 +391,13 @@ fun DayMatterApp(
                                 pendingImportCsv = null
                                 showImportModeDialog = false
                                 snackbarHostState.showSnackbar(
-                                    "已清空現有資料後匯入 ${result.imported.size} 筆，略過 ${result.skippedLines.size} 筆"
+                                    UiText.importResult(result.imported.size, result.skippedLines.size, replacedExisting = true)
                                 )
                             }
                         },
                         modifier = Modifier.fillMaxWidth(),
                     ) {
-                        Text("先刪除現有資料再匯入")
+                        Text(UiText.importReplaceExisting())
                     }
                 }
             },
@@ -407,7 +408,7 @@ fun DayMatterApp(
                         showImportModeDialog = false
                     }
                 ) {
-                    Text("取消")
+                    Text(UiText.cancel())
                 }
             }
         )
@@ -416,10 +417,10 @@ fun DayMatterApp(
     if (showClearAllConfirm) {
         AlertDialog(
             onDismissRequest = { showClearAllConfirm = false },
-            title = { Text("刪除全部資料") },
+            title = { Text(UiText.deleteAllTitle()) },
             text = {
                 Text(
-                    "這會刪除目前所有事件，無法復原。要繼續嗎？",
+                    UiText.deleteAllBody(),
                     style = MaterialTheme.typography.bodyLarge,
                 )
             },
@@ -429,16 +430,16 @@ fun DayMatterApp(
                         scope.launch {
                             viewModel.clearAll()
                             showClearAllConfirm = false
-                            snackbarHostState.showSnackbar("已刪除全部資料")
+                            snackbarHostState.showSnackbar(UiText.deleteAllDone())
                         }
                     }
                 ) {
-                    Text("刪除")
+                    Text(UiText.delete())
                 }
             },
             dismissButton = {
                 TextButton(onClick = { showClearAllConfirm = false }) {
-                    Text("取消")
+                    Text(UiText.cancel())
                 }
             }
         )
@@ -447,10 +448,10 @@ fun DayMatterApp(
     if (showDriveRestoreModeDialog) {
         AlertDialog(
             onDismissRequest = { showDriveRestoreModeDialog = false },
-            title = { Text("Google Drive 還原") },
+            title = { Text(UiText.restoreTitle()) },
             text = {
                 Text(
-                    "你可以選擇保留現有資料直接合併，或先清空目前資料再還原 Google Drive 私有備份。",
+                    UiText.restoreBody(),
                     style = MaterialTheme.typography.bodyLarge,
                 )
             },
@@ -462,7 +463,7 @@ fun DayMatterApp(
                         scope.launch {
                             val activity = context.findActivity()
                             if (activity == null) {
-                                snackbarHostState.showSnackbar("目前無法使用 Google Drive")
+                                snackbarHostState.showSnackbar(UiText.googleDriveUnavailable())
                                 return@launch
                             }
                             runCatching {
@@ -477,26 +478,26 @@ fun DayMatterApp(
                                             IntentSenderRequest.Builder(pendingIntent.intentSender).build()
                                         )
                                     } else {
-                                        snackbarHostState.showSnackbar("Google Drive 授權失敗")
+                                        snackbarHostState.showSnackbar(UiText.googleDriveAuthFailed())
                                         pendingDriveAction = null
                                     }
                                 } else {
                                     val accessToken = authResult.accessToken
                                     if (accessToken == null) {
-                                        snackbarHostState.showSnackbar("Google Drive 授權失敗")
+                                        snackbarHostState.showSnackbar(UiText.googleDriveAuthFailed())
                                     } else {
                                         val csv = GoogleDriveBackupService.restoreCsv(accessToken)
                                         viewModel.importCsv(csv, replaceExisting = false)
-                                        snackbarHostState.showSnackbar("已從 Google Drive 還原")
+                                        snackbarHostState.showSnackbar(UiText.googleDriveRestoreDone())
                                     }
                                 }
                             }.onFailure { error ->
-                                snackbarHostState.showSnackbar("Google Drive 還原失敗：${error.message ?: "未知錯誤"}")
+                                snackbarHostState.showSnackbar(UiText.googleDriveRestoreFailed(error.message ?: "Unknown error"))
                             }
                         }
                     }
                 ) {
-                    Text("保留現有資料還原")
+                    Text(UiText.restoreKeepExisting())
                 }
             },
             dismissButton = {
@@ -507,7 +508,7 @@ fun DayMatterApp(
                         scope.launch {
                             val activity = context.findActivity()
                             if (activity == null) {
-                                snackbarHostState.showSnackbar("目前無法使用 Google Drive")
+                                snackbarHostState.showSnackbar(UiText.googleDriveUnavailable())
                                 return@launch
                             }
                             runCatching {
@@ -522,26 +523,26 @@ fun DayMatterApp(
                                             IntentSenderRequest.Builder(pendingIntent.intentSender).build()
                                         )
                                     } else {
-                                        snackbarHostState.showSnackbar("Google Drive 授權失敗")
+                                        snackbarHostState.showSnackbar(UiText.googleDriveAuthFailed())
                                         pendingDriveAction = null
                                     }
                                 } else {
                                     val accessToken = authResult.accessToken
                                     if (accessToken == null) {
-                                        snackbarHostState.showSnackbar("Google Drive 授權失敗")
+                                        snackbarHostState.showSnackbar(UiText.googleDriveAuthFailed())
                                     } else {
                                         val csv = GoogleDriveBackupService.restoreCsv(accessToken)
                                         viewModel.importCsv(csv, replaceExisting = true)
-                                        snackbarHostState.showSnackbar("已從 Google Drive 還原")
+                                        snackbarHostState.showSnackbar(UiText.googleDriveRestoreDone())
                                     }
                                 }
                             }.onFailure { error ->
-                                snackbarHostState.showSnackbar("Google Drive 還原失敗：${error.message ?: "未知錯誤"}")
+                                snackbarHostState.showSnackbar(UiText.googleDriveRestoreFailed(error.message ?: "Unknown error"))
                             }
                         }
                     }
                 ) {
-                    Text("先清空再還原")
+                    Text(UiText.restoreReplaceExisting())
                 }
             }
         )
@@ -588,10 +589,10 @@ private fun EmptyState() {
             modifier = Modifier.padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text("還沒有事件", style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
+            Text(UiText.noEventsTitle(), style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                "按右下角新增第一筆倒數日。",
+                UiText.noEventsBody(),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -603,6 +604,7 @@ private fun EmptyState() {
 private fun EventListItem(
     event: EventItem,
     countdownText: String,
+    countdownDays: Long,
     detailText: String,
     onClick: () -> Unit,
 ) {
@@ -653,8 +655,8 @@ private fun EventListItem(
             Surface(
                 shape = RoundedCornerShape(16.dp),
                 color = when {
-                    countdownText == "今天" -> MaterialTheme.colorScheme.secondary.copy(alpha = 0.25f)
-                    countdownText.startsWith("已過") -> MaterialTheme.colorScheme.error.copy(alpha = 0.18f)
+                    countdownDays == 0L -> MaterialTheme.colorScheme.secondary.copy(alpha = 0.25f)
+                    countdownDays < 0L -> MaterialTheme.colorScheme.error.copy(alpha = 0.18f)
                     else -> MaterialTheme.colorScheme.primary.copy(alpha = 0.22f)
                 },
             ) {
@@ -710,7 +712,7 @@ private fun EventEditorDialog(
                     if (item.title.isNotBlank()) onSave(item)
                 }
             ) {
-                Text("儲存")
+                Text(UiText.save())
             }
         },
         dismissButton = {
@@ -719,24 +721,24 @@ private fun EventEditorDialog(
                     TextButton(onClick = { onDelete(initial.id) }) {
                         Icon(Icons.Default.Delete, contentDescription = null)
                         Spacer(modifier = Modifier.width(4.dp))
-                        Text("刪除")
+                        Text(UiText.delete())
                     }
                 }
-                TextButton(onClick = onDismiss) { Text("取消") }
+                TextButton(onClick = onDismiss) { Text(UiText.cancel()) }
             }
         },
-        title = { Text(if (initial.id == 0L) "新增事件" else "編輯事件") },
+        title = { Text(UiText.editEventTitle(initial.id == 0L)) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 OutlinedTextField(
                     value = title,
                     onValueChange = { title = it },
-                    label = { Text("事件名稱") },
+                    label = { Text(UiText.eventName()) },
                     modifier = Modifier.fillMaxWidth(),
                     singleLine = true,
                 )
 
-                Text("分類", fontWeight = FontWeight.Bold)
+                Text(UiText.category(), fontWeight = FontWeight.Bold)
                 FlowRow(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -750,7 +752,7 @@ private fun EventEditorDialog(
                     }
                 }
 
-                Text("日期", fontWeight = FontWeight.Bold)
+                Text(UiText.date(), fontWeight = FontWeight.Bold)
                 OutlinedButton(onClick = {
                     DatePickerDialog(
                         context,
@@ -765,7 +767,7 @@ private fun EventEditorDialog(
                     Text(date.format(dateFormatter))
                 }
 
-                Text("循環規則", fontWeight = FontWeight.Bold)
+                Text(UiText.repeatRule(), fontWeight = FontWeight.Bold)
                 Box {
                     OutlinedButton(onClick = { expanded = true }) {
                         Text(repeatType.label)
@@ -787,7 +789,7 @@ private fun EventEditorDialog(
                     OutlinedTextField(
                         value = repeatIntervalText,
                         onValueChange = { repeatIntervalText = it.filter { ch -> ch.isDigit() } },
-                        label = { Text("每幾天循環") },
+                        label = { Text(UiText.repeatEveryXDays()) },
                         modifier = Modifier.fillMaxWidth(),
                         keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                         singleLine = true,
@@ -796,7 +798,7 @@ private fun EventEditorDialog(
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(checked = enableReminder, onCheckedChange = { enableReminder = it })
-                    Text("啟用提醒")
+                    Text(UiText.enableReminder())
                     Spacer(modifier = Modifier.weight(1f))
                     if (enableReminder) {
                         OutlinedButton(onClick = {
@@ -815,7 +817,7 @@ private fun EventEditorDialog(
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Checkbox(checked = showInWidget, onCheckedChange = { showInWidget = it })
-                    Text("顯示於桌面 Widget")
+                    Text(UiText.showInWidget())
                 }
             }
         }
@@ -833,7 +835,7 @@ private fun SettingsDialog(
 ) {
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("設定") },
+        title = { Text(UiText.settings()) },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
                 Surface(
@@ -845,23 +847,23 @@ private fun SettingsDialog(
                         modifier = Modifier.padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
-                        Text("本地資料", fontWeight = FontWeight.Bold)
+                        Text(UiText.localData(), fontWeight = FontWeight.Bold)
                         Text(
-                            "匯入或匯出 CSV，也可以直接清除目前資料。",
+                            UiText.localDataDescription(),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         FilledTonalButton(onClick = onImport, modifier = Modifier.fillMaxWidth()) {
-                            Text("匯入 CSV")
+                            Text(UiText.importCsv())
                         }
                         Button(onClick = onExport, modifier = Modifier.fillMaxWidth()) {
-                            Text("匯出 CSV")
+                            Text(UiText.exportCsv())
                         }
                         OutlinedButton(
                             onClick = onDeleteAll,
                             modifier = Modifier.fillMaxWidth(),
                         ) {
-                            Text("刪除全部資料")
+                            Text(UiText.deleteAllData())
                         }
                     }
                 }
@@ -875,24 +877,24 @@ private fun SettingsDialog(
                         modifier = Modifier.padding(16.dp),
                         verticalArrangement = Arrangement.spacedBy(12.dp),
                     ) {
-                        Text("Google Drive", fontWeight = FontWeight.Bold)
+                        Text(UiText.googleDrive(), fontWeight = FontWeight.Bold)
                         Text(
-                            "使用私有 appData 備份與還原，不會出現在可見雲端資料夾。",
+                            UiText.googleDriveDescription(),
                             style = MaterialTheme.typography.bodyMedium,
                             color = MaterialTheme.colorScheme.onSurfaceVariant,
                         )
                         FilledTonalButton(onClick = onDriveBackup, modifier = Modifier.fillMaxWidth()) {
-                            Text("Google Drive 備份")
+                            Text(UiText.googleDriveBackup())
                         }
                         Button(onClick = onDriveRestore, modifier = Modifier.fillMaxWidth()) {
-                            Text("Google Drive 還原")
+                            Text(UiText.googleDriveRestore())
                         }
                     }
                 }
             }
         },
         confirmButton = {
-            TextButton(onClick = onDismiss) { Text("關閉") }
+            TextButton(onClick = onDismiss) { Text(UiText.close()) }
         }
     )
 }
