@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId = "com.rsps1008.daymatter"
-        minSdk = 32
+        minSdk = 28
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"
