@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DayMatter 隱私政策</title>
+  <meta name="description" content="DayMatter 隱私政策">
+  <style>
+    :root {
+      color-scheme: light;
+      --bg: #eef4ff;
+      --bg-2: #f7f2e8;
+      --panel: rgba(255, 255, 255, 0.9);
+      --text: #172033;
+      --muted: #5f6a7a;
+      --accent: #2f67ff;
+      --accent-2: #f4a62a;
+      --border: #d7e0ef;
+      --shadow: 0 20px 60px rgba(18, 32, 51, 0.10);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      line-height: 1.75;
+      background:
+        radial-gradient(circle at top left, rgba(47, 103, 255, 0.14), transparent 28%),
+        radial-gradient(circle at top right, rgba(244, 166, 42, 0.16), transparent 24%),
+        linear-gradient(180deg, var(--bg), var(--bg-2));
+    }
+
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 40px 20px 64px;
+    }
+
+    .hero {
+      display: grid;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .eyebrow {
+      margin: 0;
+      color: var(--accent);
+      font-size: 0.82rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .title-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.1rem);
+      line-height: 1.12;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(47, 103, 255, 0.18);
+      background: rgba(47, 103, 255, 0.08);
+      color: var(--accent);
+      font-size: 0.92rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .meta {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 26px;
+      padding: 30px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .summary {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 26px;
+      padding: 18px 18px 16px;
+      border: 1px solid rgba(47, 103, 255, 0.12);
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(47, 103, 255, 0.06), rgba(244, 166, 42, 0.05));
+    }
+
+    .summary strong {
+      color: var(--text);
+    }
+
+    h2 {
+      margin: 28px 0 12px;
+      font-size: 1.18rem;
+      line-height: 1.35;
+    }
+
+    p {
+      margin: 0 0 14px;
+      font-size: 1rem;
+    }
+
+    ul {
+      margin: 0 0 16px;
+      padding-left: 1.25rem;
+    }
+
+    li {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration-thickness: 1.5px;
+      text-underline-offset: 2px;
+      word-break: break-word;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .info-box {
+      padding: 16px 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(95, 106, 122, 0.16);
+      background: rgba(255, 255, 255, 0.7);
+    }
+
+    .info-box h3 {
+      margin: 0 0 8px;
+      font-size: 1rem;
+    }
+
+    .info-box p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .note {
+      margin-top: 28px;
+      padding: 14px 16px;
+      border-left: 4px solid var(--accent);
+      border-radius: 12px;
+      background: rgba(47, 103, 255, 0.07);
+      color: var(--muted);
+    }
+
+    footer {
+      margin-top: 24px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 720px) {
+      main {
+        padding: 18px 12px 32px;
+      }
+
+      .card {
+        padding: 20px 16px;
+        border-radius: 18px;
+      }
+
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="hero" aria-label="privacy policy header">
+      <p class="eyebrow">Privacy Policy</p>
+      <div class="title-row">
+        <h1>DayMatter 隱私政策</h1>
+        <span class="pill">DayMatter Android App</span>
+      </div>
+      <p class="meta">最後更新日期：2026 年 5 月 9 日</p>
+    </section>
+
+    <section class="card">
+      <div class="summary">
+        <p><strong>DayMatter</strong> 是一款倒數日管理 App，主要功能包含事件新增、編輯、刪除、提醒通知、桌面 Widget、CSV 匯入 / 匯出，以及 Google Drive 私有備份與還原。</p>
+        <p>這份隱私政策說明我們會處理哪些資料、資料儲存在哪裡，以及你可以如何控制自己的資料。</p>
+      </div>
+
+      <h2>1. 開發者資訊</h2>
+      <ul>
+        <li>開發者名稱：rsps1008</li>
+        <li>專案網站：<a href="https://github.com/rsps1008/DaysMatter" target="_blank" rel="noreferrer">https://github.com/rsps1008/DaysMatter</a></li>
+        <li>問題回報：<a href="https://github.com/rsps1008/DaysMatter/issues" target="_blank" rel="noreferrer">https://github.com/rsps1008/DaysMatter/issues</a></li>
+      </ul>
+
+      <h2>2. 我們會處理哪些資料</h2>
+      <ul>
+        <li>你手動建立的事件資料，例如標題、日期、分類、循環設定、提醒時間、是否顯示於 Widget 與備註內容。</li>
+        <li>你在 App 內設定的偏好，例如語言、通知相關設定、匯入 / 匯出選項與其他介面設定。</li>
+        <li>你匯入、匯出或備份時使用的 CSV 內容。</li>
+        <li>你啟用 Google Drive 備份或還原時，為了完成授權所使用的 Google 帳戶權杖與備份檔案內容。</li>
+        <li>App 為了排程提醒、更新 Widget、或載入資料而在本機處理的事件與日期資訊。</li>
+      </ul>
+
+      <h2>3. 我們如何使用這些資料</h2>
+      <ul>
+        <li>顯示倒數事件、今日狀態與 Widget 內容。</li>
+        <li>計算距離事件的天數與提醒時間。</li>
+        <li>提供 CSV 匯入 / 匯出功能。</li>
+        <li>提供 Google Drive 私有備份與還原功能。</li>
+        <li>儲存你的個人化設定與 App 內資料。</li>
+      </ul>
+      <p>我們不會把你建立的事件內容拿去做與 App 功能無關的用途。</p>
+
+      <h2>4. 資料儲存位置</h2>
+      <ul>
+        <li>事件資料與設定主要儲存在你的裝置上。</li>
+        <li>提醒排程與 Widget 狀態也會使用裝置上的系統機制保存。</li>
+        <li>CSV 匯出檔會由你手動選擇儲存位置。</li>
+        <li>若你啟用 Google Drive 備份，資料會儲存在你自己的 Google Drive <code>appDataFolder</code> 中，不會出現在可見的雲端資料夾。</li>
+        <li>本 App 不設置也不營運自己的後端伺服器來集中保存你的資料。</li>
+      </ul>
+
+      <h2>5. 第三方服務</h2>
+      <ul>
+        <li>Google Identity / Google 授權流程</li>
+        <li>Google Drive API</li>
+      </ul>
+      <p>當你使用 Google Drive 備份或還原時，相關資料會依 Google 的服務條款與隱私政策處理。</p>
+
+      <h2>6. 我們是否分享你的資料</h2>
+      <ul>
+        <li>我們不會販售你的個人資料。</li>
+        <li>我們不會把你的事件清單提供給廣告商或行銷商。</li>
+        <li>只有在你主動使用 Google Drive 備份 / 還原時，資料才會傳送給 Google 服務。</li>
+        <li>只有在你開啟提醒功能時，App 才會依事件設定發出通知。</li>
+      </ul>
+
+      <h2>7. 我們是否蒐集敏感資料</h2>
+      <ul>
+        <li>DayMatter 不要求你提供聯絡人、相機、麥克風、GPS 位置、簡訊、電話紀錄或廣告識別碼。</li>
+        <li>若你使用 Google Drive 備份，Google 可能會回傳必要的帳戶授權資訊，以完成登入或存取流程。</li>
+      </ul>
+
+      <h2>8. 權限使用說明</h2>
+      <ul>
+        <li><strong>通知權限</strong>：用來在事件到期前或到期時提醒你。</li>
+        <li><strong>開機完成權限</strong>：用來在裝置重開機後重新排程提醒。</li>
+        <li><strong>網路權限</strong>：用來存取 Google Drive 與完成必要的雲端同步。</li>
+      </ul>
+
+      <h2>9. 資料保存與刪除</h2>
+      <ul>
+        <li>你可以在 App 內刪除單筆事件、批次資料或所有資料。</li>
+        <li>你可以手動匯出 CSV，並自行保存備份。</li>
+        <li>若你使用 Google Drive 備份，相關檔案會留在你的 Google 帳戶中，直到你自行刪除。</li>
+        <li>刪除本機資料後，已儲存在裝置上的事件與設定也會一併移除。</li>
+      </ul>
+
+      <h2>10. 安全性</h2>
+      <ul>
+        <li>我們使用 Android 內建儲存機制與系統授權流程來降低風險。</li>
+        <li>Google Drive 備份使用授權存取，不會要求你提供密碼給本 App。</li>
+        <li>但任何透過網際網路傳輸或儲存在裝置上的資料，都無法保證百分之百安全。</li>
+      </ul>
+
+      <h2>11. 兒童隱私</h2>
+      <p>DayMatter 並非以 13 歲以下兒童為主要對象設計。如果你認為我們意外處理到兒童資料，請透過 GitHub Issue 與我們聯絡。</p>
+
+      <h2>12. 政策變更</h2>
+      <p>我們可能會因功能調整、法規變更或上架要求而更新本隱私政策。更新後的版本將以最新發布日期為準。</p>
+
+      <h2>13. 聯絡我們</h2>
+      <div class="grid">
+        <div class="info-box">
+          <h3>GitHub</h3>
+          <p><a href="https://github.com/rsps1008/DaysMatter" target="_blank" rel="noreferrer">https://github.com/rsps1008/DaysMatter</a></p>
+        </div>
+        <div class="info-box">
+          <h3>Issues</h3>
+          <p><a href="https://github.com/rsps1008/DaysMatter/issues" target="_blank" rel="noreferrer">https://github.com/rsps1008/DaysMatter/issues</a></p>
+        </div>
+      </div>
+
+      <footer>
+        本頁面僅供 DayMatter App 使用，內容會隨功能更新而調整。
+      </footer>
+    </section>
+  </main>
+</body>
+</html>
